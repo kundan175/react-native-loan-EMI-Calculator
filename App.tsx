@@ -1,118 +1,75 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import {Provider} from 'react-redux';
+import {PersistGate} from 'redux-persist/integration/react';
+import {store, persistor} from './src/store/store';
+import {NavigationContainer} from '@react-navigation/native';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import EMICalculator from './src/screens/EMICalculator';
+import History from './src/screens/History';
+import About from './src/screens/About';
+import {SafeAreaView, View} from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+const Tab = createBottomTabNavigator();
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+const App = () => {
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <View style={{flex: 1}}>
+          <SafeAreaView style={{backgroundColor: 'white'}} />
+          <NavigationContainer>
+            <Tab.Navigator
+              screenOptions={{
+                tabBarActiveTintColor: '#4CAF50',
+                tabBarInactiveTintColor: '#757575',
+                tabBarLabelStyle: {
+                  fontSize: 12,
+                  fontWeight: '500',
+                },
+                tabBarStyle: {
+                  backgroundColor: '#FFFFFF',
+                  borderTopWidth: 1,
+                  borderTopColor: '#E0E0E0',
+                  paddingBottom: 8,
+                  paddingTop: 8,
+                  height: 75,
+                },
+                headerShown: false,
+              }}>
+              <Tab.Screen
+                name="Calculator"
+                component={EMICalculator}
+                options={{
+                  tabBarIcon: ({color, size}) => (
+                    <Icon name="calculator" size={size} color={color} />
+                  ),
+                }}
+              />
+              <Tab.Screen
+                name="History"
+                component={History}
+                options={{
+                  tabBarIcon: ({color, size}) => (
+                    <Icon name="history" size={size} color={color} />
+                  ),
+                }}
+              />
+              <Tab.Screen
+                name="About"
+                component={About}
+                options={{
+                  tabBarIcon: ({color, size}) => (
+                    <Icon name="information" size={size} color={color} />
+                  ),
+                }}
+              />
+            </Tab.Navigator>
+          </NavigationContainer>
         </View>
-      </ScrollView>
-    </SafeAreaView>
+      </PersistGate>
+    </Provider>
   );
-}
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+};
 
 export default App;
