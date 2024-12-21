@@ -1,4 +1,5 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
+import * as RNLocalize from 'react-native-localize';
 import {
   View,
   Text,
@@ -47,9 +48,22 @@ const History = () => {
     });
   };
 
-  const formatCurrency = (value: number) => {
-    return '₹ ' + value.toLocaleString('en-IN');
-  };
+  const formatCurrency = useMemo(() => {
+    const locale = RNLocalize.getLocales()[0];
+    const currency = RNLocalize.getCurrencies()[0];
+
+    return (value: number) => {
+      try {
+        return new Intl.NumberFormat(locale.languageTag, {
+          style: 'currency',
+          currency: currency,
+        }).format(value);
+      } catch (error) {
+        // Fallback to basic formatting if Intl.NumberFormat fails
+        return currency + ' ' + value.toLocaleString(locale.languageTag);
+      }
+    };
+  }, []);
 
   const renderItem = ({item}: {item: LoanDetails}) => (
     <View style={styles.card}>
